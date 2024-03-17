@@ -1,11 +1,11 @@
 use std::process;
-use minigrep::Config;
+use minigrep::Arguments;
 use clap::Parser;
 
 fn main() {
-    let config = Config::parse();
+    let args = Arguments::parse();
 
-    if let Err(e) = minigrep::run(config) {
+    if let Err(e) = minigrep::run(args) {
         eprintln!("Application error: {e}");
         process::exit(1);
     }

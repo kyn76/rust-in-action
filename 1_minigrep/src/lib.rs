@@ -1,12 +1,12 @@
 use std::error::Error;
 use std::fs;
-//use std::env;
 use std::path::PathBuf;
 use clap::Parser;
+use regex::Regex;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
-pub struct Config {
+pub struct Arguments {
     /// the pattern to look for
     pub query: String,
 
@@ -16,16 +16,22 @@ pub struct Config {
     /// ignore case option when searching
     #[arg(short, long)]
     pub ignore_case: bool,
+
+    /// search query as regular expression
+    #[arg(short = 'e', long)]
+    pub extended_regex: bool,
 }
 
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.file_path)?;
+pub fn run(args: Arguments) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(args.file_path)?;
 
-    let results = if config.ignore_case {
-        search_case_insensitive(&config.query, &contents)
+    let results = if args.extended_regex {
+        search_regex(&args.query, &contents)
+    } else if args.ignore_case {
+        search_case_insensitive(&args.query, &contents)
     } else {
-        search(&config.query, &contents)
+        search(&args.query, &contents)
     };
 
     for line in results {
@@ -58,6 +64,21 @@ pub fn search_case_insensitive<'a>(
         }
     }
 
+    results
+}
+
+pub fn search_regex<'a>(
+    query: &str,
+    contents: &'a str,
+) -> Vec<&'a str> {
+    let mut results = Vec::new();
+    let re = Regex::new(query).unwrap();
+    // return all lines in which an expression matches the regex
+    for line in contents.lines() {
+        if re.is_match(line) {
+            results.push(line);
+        }
+    }
     results
 }
 
