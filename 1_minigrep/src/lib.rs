@@ -113,4 +113,19 @@ Trust me.";
             search_case_insensitive(query, contents)
         );
     }
+
+    #[test]
+    fn case_regex() {
+        let query = "[rR]ust";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_regex(query, contents)
+        );
+    }
 }
