@@ -1,15 +1,34 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use] extern crate rocket;
-#[macro_use] extern crate rocket_contrib;
+use rocket_sync_db_pools::{database, diesel};
 
-use rocket_contrib::databases::diesel;
-use rocket::data::Outcome;
 
-// DB configuration
-#[Outcome::database("sqlite_db")]
+#[database("sqlite_db")]
 struct UrlsDbConnection(diesel::SqliteConnection);
 
+#[derive(Queryable)]
+struct Urls {
+    full_url: String,
+    short_url: String,
+}
+
+
+fn load_from_db(connection: &diesel::SqliteConnection) -> String {
+    use crate::schema::urls::dsl::*;
+
+    let results = urls
+}
+
+#[get("/")]
+async fn index(mut connection: UrlsDbConnection) -> &'static str {
+    connection.run(|c| load_from_db(c)).await
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
+        .mount("/", routes![index])
+        .attach(UrlsDbConn::fairing())
+}
 
 // // Routes
 // #[get("/")]
@@ -36,19 +55,10 @@ struct UrlsDbConnection(diesel::SqliteConnection);
 // }
 
 // #[launch]
-fn main() -> _ {
-    // // init url database in memory
-    // let connection = sqlite::open(":memory:").unwrap();
-    // let query = "
-    // CREATE TABLE users (name TEXT, age INTEGER);
-    // INSERT INTO users VALUES ('alice', 42);
-    // INSERT INTO users VALUES ('bob', 69);
-    // ";
-    // connection.execute(query).unwrap();
+// fn main() -> _ {
 
-
-    rocket::ignite()
-        // .mount("/", routes![index, google])
-        .attach(UrlsDbConnection::fairing())
-        .launch();
-}
+//     rocket::ignite()
+//         // .mount("/", routes![index, google])
+//         .attach(UrlsDbConnection::fairing())
+//         .launch();
+// }
