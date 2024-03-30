@@ -1,64 +1,32 @@
-#[macro_use] extern crate rocket;
-use rocket_sync_db_pools::{database, diesel};
+#[macro_use]
+extern crate rocket;
+mod database;
+
+use database::requests::UrlsRequest;
+use database::responses::Urls;
+use database::{get_all_urls, DBResult};
+use rocket::serde::json::Json;
+use rocket::State;
+use sqlx::{Pool, Sqlite, SqlitePool};
 
 
-#[database("sqlite_db")]
-struct UrlsDbConnection(diesel::SqliteConnection);
-
-#[derive(Queryable)]
-struct Urls {
-    full_url: String,
-    short_url: String,
+#[get("/urls")]
+async fn index(pool: &State<Pool<Sqlite>>) -> DBResult<Json<Vec<Urls>>> {
+    let urls = get_all_urls(pool).await?;
+    println!("Urls: {:?}", urls);
+    Ok(Json(urls))
 }
 
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
+    let pool = SqlitePool::connect("urls.sqlite")
+        .await
+        .expect("Couldn't connect to sqlite database");
 
-fn load_from_db(connection: &diesel::SqliteConnection) -> String {
-    use crate::schema::urls::dsl::*;
-
-    let results = urls
-}
-
-#[get("/")]
-async fn index(mut connection: UrlsDbConnection) -> &'static str {
-    connection.run(|c| load_from_db(c)).await
-}
-
-#[launch]
-fn rocket() -> _ {
-    rocket::build()
+    let _rocket = rocket::build()
         .mount("/", routes![index])
-        .attach(UrlsDbConn::fairing())
+        .manage(pool)
+        .launch()
+        .await?;
+    Ok(())
 }
-
-// // Routes
-// #[get("/")]
-// fn index() -> &'static str {
-//     "Hello, world!"
-// }
-
-// #[get("/google")]
-// fn google(connection: UrlsDbConnection) {
-//     // access bdd item here
-//     let query = "SELECT * FROM urls;";
-//     connection
-//         .iterate(query, |row| {
-//             let full_url: String = row.get(0).unwrap();
-//             println!("Full: {}", full_url);
-//         true
-//         })
-//         .unwrap();
-// }
-
-// // #[get("/showall")]
-// fn showall() -> &'static str {
-//     "Hello, showall!"
-// }
-
-// #[launch]
-// fn main() -> _ {
-
-//     rocket::ignite()
-//         // .mount("/", routes![index, google])
-//         .attach(UrlsDbConnection::fairing())
-//         .launch();
-// }
