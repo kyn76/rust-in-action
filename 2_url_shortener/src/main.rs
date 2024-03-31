@@ -4,7 +4,7 @@ mod database;
 
 use database::requests::UrlPairRequest;
 use database::responses::UrlPair;
-use database::{get_all_url_pairs, get_full_url, DBResult};
+use database::{delete_url_pair, get_all_url_pairs, get_full_url, insert_url_pair, DBResult};
 use rocket::serde::json::Json;
 use rocket::State;
 use sqlx::{Pool, Sqlite, SqlitePool};
@@ -15,18 +15,33 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
-#[get("/showall")]
+#[get("/urls")]
 async fn showall(pool: &State<Pool<Sqlite>>) -> DBResult<Json<Vec<UrlPair>>> {
     let urls = get_all_url_pairs(pool).await?;
     println!("Url Pairs: {:?}", urls);
     Ok(Json(urls))
 }
 
-#[get("/<short_url>")]
+#[post("/url", format = "json", data = "<url_pair>")]
+async fn create_redirection(url_pair: Json<UrlPairRequest>, pool: &State<Pool<Sqlite>>) -> DBResult<Json<String>> {
+    insert_url_pair(pool, &url_pair.full_url, &url_pair.short_url).await?;
+    let response = format!("Short url {} created to redirect to {}", &url_pair.short_url, &url_pair.full_url);
+    Ok(Json(response))
+}
+
+
+#[get("/url/<short_url>")]
 async fn redirect(short_url: String, pool: &State<Pool<Sqlite>>) -> DBResult<Json<String>> {
-    let full_url = get_full_url(&short_url, pool).await?;
+    let full_url = get_full_url(pool, &short_url).await?;
     println!("Url: {:?}", full_url);
     Ok(Json(full_url))
+}
+
+#[delete("/url/<short_url>")]
+async fn delete_redirection(short_url: String, pool: &State<Pool<Sqlite>>) -> DBResult<Json<String>> {
+    delete_url_pair(pool, &short_url).await?;
+    let response = format!("Redirection with short url '{}' deleted successfully", short_url);
+    Ok(Json(response))
 }
 
 
@@ -39,7 +54,7 @@ async fn main() -> Result<(), rocket::Error> {
 
     // launch server
     let _rocket = rocket::build()
-        .mount("/", routes![index, showall, redirect])
+        .mount("/", routes![index, showall, create_redirection, redirect, delete_redirection])
         .manage(pool)
         .launch()
         .await?;

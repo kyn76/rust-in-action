@@ -23,7 +23,7 @@ pub async fn get_all_url_pairs(pool: &Pool<Sqlite>) -> DBResult<Vec<UrlPair>> {
         Ok(url_pairs)
 }
 
-pub async fn get_full_url(short_url: &str, pool: &Pool<Sqlite>) -> DBResult<String> {
+pub async fn get_full_url(pool: &Pool<Sqlite>, short_url: &str) -> DBResult<String> {
     let mut connection = pool.acquire()
         .await
         .unwrap();
@@ -38,4 +38,43 @@ pub async fn get_full_url(short_url: &str, pool: &Pool<Sqlite>) -> DBResult<Stri
         .fetch_one(&mut connection)
         .await?;
         Ok(url_pair.full_url.unwrap())
+}
+
+pub async fn insert_url_pair(
+    pool: &Pool<Sqlite>,
+    full_url: &String,
+    short_url: &String,
+) -> DBResult<()> {
+    let mut connection = pool
+        .acquire()
+        .await?;
+    sqlx::query!(
+        r#"
+        INSERT INTO urls VALUES (?, ?);
+        "#,
+        full_url,
+        short_url
+    )
+        .execute(&mut connection)
+        .await?;
+        Ok(())
+}
+
+pub async fn delete_url_pair(
+    pool: &Pool<Sqlite>,
+    short_url: &String,
+) -> DBResult<()> {
+    let mut connection = pool
+        .acquire()
+        .await?;
+    sqlx::query!(
+            r#"
+        DELETE FROM urls
+        WHERE short_url = ?;
+        "#,
+        short_url
+    )
+        .execute(&mut connection)
+        .await?;
+        Ok(())
 }
