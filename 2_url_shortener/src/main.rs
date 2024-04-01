@@ -5,6 +5,7 @@ mod database;
 use database::requests::UrlPairRequest;
 use database::responses::UrlPair;
 use database::{delete_url_pair, get_all_url_pairs, get_full_url, insert_url_pair, DBResult};
+use rocket::response::Redirect;
 use rocket::serde::json::Json;
 use rocket::State;
 use sqlx::{Pool, Sqlite, SqlitePool};
@@ -31,10 +32,10 @@ async fn create_redirection(url_pair: Json<UrlPairRequest>, pool: &State<Pool<Sq
 
 
 #[get("/url/<short_url>")]
-async fn redirect(short_url: String, pool: &State<Pool<Sqlite>>) -> DBResult<Json<String>> {
+async fn redirect(short_url: String, pool: &State<Pool<Sqlite>>) -> DBResult<Redirect> {
     let full_url = get_full_url(pool, &short_url).await?;
     println!("Url: {:?}", full_url);
-    Ok(Json(full_url))
+    Ok(Redirect::to(format!("https://{}", full_url)))
 }
 
 #[delete("/url/<short_url>")]
