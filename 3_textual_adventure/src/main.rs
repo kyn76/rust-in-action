@@ -14,6 +14,7 @@ fn main() -> io::Result<()> {
         current_state = current_state.next(&input.trim());
         input.clear();
         if current_state.is_terminal() {
+            println!("{}", current_state.message());
             break;
         }
     }
