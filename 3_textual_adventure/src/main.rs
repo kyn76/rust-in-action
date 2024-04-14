@@ -9,7 +9,7 @@ use std::thread;
 use std::time::Duration;
 use unicode_segmentation::UnicodeSegmentation;
 
-const WRITING_DELAY: u64 = 20;
+const WRITING_DELAY: u64 = 10;
 
 
 fn main() -> io::Result<()> {
