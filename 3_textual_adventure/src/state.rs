@@ -218,7 +218,7 @@ impl State for HearthState {
 
 impl State for DoorState {
     fn message(&self, _: &Inventory) -> &str {
-        "\nPorte.\n\n1. Ouvrir la porte\n2. Faire demi-tour\n"
+        "\nVous êtes face à la porte.\n\n1. Ouvrir la porte\n2. Faire demi-tour\n"
     }
 
     fn next(&self, choice: &str, inventory: &mut Inventory) -> Box<dyn State> {
