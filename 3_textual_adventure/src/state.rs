@@ -8,7 +8,6 @@ pub struct PotState;
 pub struct DoorState;
 pub struct HearthState;
 pub struct CarpetState;
-
 pub struct FinalBossState;
 pub struct EndState;
 pub struct DeadState;
