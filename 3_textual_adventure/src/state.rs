@@ -188,7 +188,7 @@ impl State for HearthState {
                 Box::new(HearthState)
             }
             "213" => {
-                streamed_print("\nLa cheminée se met à trembler et une trappe de pierre s'ouvre devant vous.\nUn ours bleu gigantesque en sort. Il vous massacre sans pitié.\n");
+                streamed_print("\nLa cheminée se met à trembler et une trappe de pierre s'ouvre devant vous.\nUn ours bleu gigantesque en sort. Il vous massacre sans pitié. Bon... la cheminée était un piège visiblement.\n");
                 Box::new(DeadState)
             }
             "231" => {
