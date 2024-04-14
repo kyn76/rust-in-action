@@ -28,7 +28,7 @@ impl State for StartState  {
     fn next(&self, choice: &str, _: &mut Inventory) -> Box<dyn State> {
         match choice {
             _ => {
-                println!("--- Début de l'aventure ---");
+                println!("\n--- Début de l'aventure ---");
                 Box::new(HallState)
             }
         }
@@ -43,23 +43,23 @@ impl State for HallState {
     fn next(&self, choice: &str, _: &mut Inventory) -> Box<dyn State> {
         match choice {
             "1" => {
-                println!("Inspectons cette table...");
+                println!("\nInspectons cette table...");
                 Box::new(TableState)
             }
             "2" => {
-                println!("Vous vous rapprochez de la cheminée.");
+                println!("\nVous vous rapprochez de la cheminée.");
                 Box::new(HearthState)
             }
             "3" => {
-                println!("Allons voir cette jolie porte.");
+                println!("\nAllons voir cette jolie porte.");
                 Box::new(DoorState)
             }
             "4" => {
-                println!("Vous regardez le tapis de plus près.");
+                println!("\nVous regardez le tapis de plus près.");
                 Box::new(CarpetState)
             }
             _ => {
-                println!("Choix invalide.");
+                println!("\nChoix invalide.");
                 Box::new(HallState)
             }
             
@@ -79,28 +79,28 @@ impl State for TableState  {
     fn next(&self, choice: &str, inventory: &mut Inventory) -> Box<dyn State> {
         match choice {
             "1" => {
-                println!("Chandelier");
+                println!("\nChandelier");
                 Box::new(TableState)
             }
             "2" => {
                 if !inventory.has_key {
-                    println!("Vase");
+                    println!("\nVase");
                     Box::new(PotState)
                 } else {
-                    println!("Choix invalide.");
+                    println!("\nChoix invalide.");
                     Box::new(TableState)
                 }
             }
             "3" => {
-                println!("Vaisselle");
+                println!("\nVaisselle");
                 Box::new(TableState)
             }
             "4" => {
-                println!("Vous ignorez la table.");
+                println!("\nVous ignorez la table.");
                 Box::new(HallState)
             }
             _ => {
-                println!("Choix invalide.");
+                println!("\nChoix invalide.");
                 Box::new(TableState)
             }
         }
@@ -115,24 +115,24 @@ impl State for PotState  {
     fn next(&self, choice: &str, inventory: &mut Inventory) -> Box<dyn State> {
         match choice {
             "1" => {
-                println!("Vous mettez votre main dans le vase.");
+                println!("\nVous mettez votre main dans le vase.");
                 Box::new(DeadState)
             }
             "2" => {
-                println!("Vous admirez le vase.");
+                println!("\nVous admirez le vase.");
                 Box::new(PotState)
             }
             "3" => {
-                println!("Vous cassez le vase. L'acide chlorhydrique se répand sur le sol. Vous récupérez une clef.");
+                println!("\nVous cassez le vase. L'acide chlorhydrique se répand sur le sol. Vous récupérez une clef.");
                 inventory.add_key();
                 Box::new(TableState)
             }
             "4" => {
-                println!("Vous ignorez le vase.");
+                println!("\nVous ignorez le vase.");
                 Box::new(TableState)
             }
             _ => {
-                println!("Choix invalide.");
+                println!("\nChoix invalide.");
                 Box::new(PotState)
             }
         }
@@ -147,24 +147,24 @@ impl State for CarpetState {
     fn next(&self, choice: &str, inventory: &mut Inventory) -> Box<dyn State> {
         match choice {
             "1" => {
-                println!("Vous essuyez les pieds. D'accord.");
+                println!("\nVous essuyez les pieds. D'accord.");
                 Box::new(HallState)
             }
             "2" => {
                 if !inventory.has_sword {
-                    println!("Vous soulevez le tapis. Il y a un escalier qui mène à un piédestal muni d'une épée.\nBravo, vous êtes maintenant équipé d'une arme !");
+                    println!("\nVous soulevez le tapis. Il y a un escalier qui mène à un piédestal muni d'une épée.\nBravo, vous êtes maintenant équipé d'une arme !");
                     inventory.add_sword();
                 } else {
-                    println!("Vous soulevez le tapis. Il y a un escalier qui mène à un piédestal. Vous avez déjà récupéré l'épée ici. Bon vent !");
+                    println!("\nVous soulevez le tapis. Il y a un escalier qui mène à un piédestal. Vous avez déjà récupéré l'épée ici. Bon vent !");
                 }
                 Box::new(HallState)
             }
             "3" => {
-                println!("Vous ignorez le tapis.");
+                println!("\nVous ignorez le tapis.");
                 Box::new(HallState)
             }
             _ => {
-                println!("Choix invalide.");
+                println!("\nChoix invalide.");
                 Box::new(CarpetState)
             }
         }
@@ -180,35 +180,35 @@ impl State for HearthState {
     fn next(&self, choice: &str, _: &mut Inventory) -> Box<dyn State> {
         match choice {
             "123" => {
-                println!("Rien ne se passe...");
+                println!("\nRien ne se passe...");
                 Box::new(HearthState)
             }
             "132" => {
-                println!("Rien ne se passe...");
+                println!("\nRien ne se passe...");
                 Box::new(HearthState)
             }
             "213" => {
-                println!("La cheminée se met à trembler et une trappe de pierre s'ouvre devant vous.\nUn ours bleu gigantesque en sort et vous tue sur le coup.");
+                println!("\nLa cheminée se met à trembler et une trappe de pierre s'ouvre devant vous.\nUn ours bleu gigantesque en sort et vous tue sur le coup.");
                 Box::new(DeadState)
             }
             "231" => {
-                println!("Rien ne se passe...");
+                println!("\nRien ne se passe...");
                 Box::new(HearthState)
             }
             "312" => {
-                println!("Rien ne se passe...");
+                println!("\nRien ne se passe...");
                 Box::new(HearthState)
             }
             "321" => {
-                println!("Rien ne se passe...");
+                println!("\nRien ne se passe...");
                 Box::new(HearthState)
             }
             "retour" => {
-                println!("Vous ignorez la cheminée.");
+                println!("\nVous ignorez la cheminée.");
                 Box::new(HallState)
             }
             _ => {
-                println!("Choix invalide. Entrez une combinaison des 3 chiffres 1, 2, 3 sans les répéter. Ou 'retour' pour ignorer cette énigme.");
+                println!("\nChoix invalide. Entrez une combinaison des 3 chiffres 1, 2, 3 sans les répéter. Ou 'retour' pour ignorer cette énigme.");
                 Box::new(HearthState)
             }
 
@@ -225,19 +225,19 @@ impl State for DoorState {
         match choice {
             "1" => {
                 if !inventory.has_key {
-                    println!("Vous tournez la poignée. La porte ne s'ouvre pas, elle semble vérouillée... Vous faîtes demi-tour.");
+                    println!("\nVous tournez la poignée. La porte ne s'ouvre pas, elle semble vérouillée... Vous faîtes demi-tour.");
                     Box::new(HallState)
                 } else {
-                    println!("Vous ouvrez la porte.");
+                    println!("\nVous ouvrez la porte.");
                     Box::new(FinalBossState)
                 }
             }
             "2" => {
-                println!("Vous faites demi-tour.");
+                println!("\nVous faites demi-tour.");
                 Box::new(HallState)
             }
             _ => {
-                println!("Choix invalide.");
+                println!("\nChoix invalide.");
                 Box::new(DoorState)
             }
         }
@@ -251,10 +251,10 @@ impl State for FinalBossState {
 
     fn next(&self, _: &str, inventory: &mut Inventory) -> Box<dyn State> {
         if inventory.has_sword {
-            println!("Vous terrassez l'arachnide à l'aide de votre épée d'argent ! Bravo !");
+            println!("\nVous terrassez l'arachnide à l'aide de votre épée d'argent ! Bravo !");
             Box::new(EndState)
         } else {
-            println!("Vous n'avez rien pour vous défendre. La mygale vous dévore.");
+            println!("\nVous n'avez rien pour vous défendre. La mygale vous dévore.");
             Box::new(DeadState)
         }
     }
