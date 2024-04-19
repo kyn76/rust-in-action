@@ -174,7 +174,7 @@ impl State for CarpetState {
 
 impl State for HearthState {
     fn message(&self, _: &Inventory) -> &str {
-        "\nVous inspectez en détail la cheminée, il y a trois cercles de pierres numérotés de 1 à 3 que l'on peut enfoncer une fois chacun. Il faut sûrement les activer dans un ordre précis... Entrez une combinaison :\n"
+        "\nVous inspectez en détail la cheminée, il y a trois cercles de pierres numérotés de 1 à 3 que l'on peut enfoncer une fois chacun. Il faut sûrement les activer dans un ordre précis... Entrez une combinaison (ou 'retour' pour ignorer la cheminée) :\n"
     }
 
     fn next(&self, choice: &str, _: &mut Inventory) -> Box<dyn State> {
